@@ -1,4 +1,4 @@
-"""Conventional CPU implementation of causalised Granger causality."""
+"""Conventional CPU runtime backend for c-GC and c-GC*."""
 
 import numpy as np
 from sklearn.linear_model import LinearRegression
@@ -292,13 +292,14 @@ class GcStar:
             shape [n_neur x Time]
 
             method: str. Defines which conditioning set to use.
-                Takes arguments "cgc" or "fcgc"
+                Takes arguments "cgc" or "cgc_star". The historical
+                "fcgc" spelling is accepted as an alias for "cgc_star".
 
                 cgc: when conventional Granger causality conditioning set
                 is preferred
 
-                fcgc: when full conditioning set including future states
-                is preferred for use.
+                cgc_star: when the c-GC* full conditioning set including
+                future states is preferred.
 
 
         Returns:
@@ -330,7 +331,7 @@ class GcStar:
                 self.data = X.copy()
 
                 # Obtain conditioning set via the 'method' argument
-                if self.method == 'fcgc':
+                if self.method in {'cgc_star', 'fcgc'}:
                     z = np.delete(data.copy(), [i, j], axis=0)
                 else:
                     z = self.get_conditioning_set(self.data, i, j)
@@ -359,13 +360,14 @@ class GcStar:
                 and `T` is the time or number of samples
 
             method: str. Defines which conditioning set to use.
-                Takes arguments "cgc" or "fcgc"
+                Takes arguments "cgc" or "cgc_star". The historical
+                "fcgc" spelling is accepted as an alias for "cgc_star".
 
                 cgc: when conventional Granger causality conditioning set
                 is preferred
 
-                fcgc: when full conditioning set with future states,
-                is preferred for use.
+                cgc_star: when the c-GC* full conditioning set with future
+                states is preferred.
 
 
         Returns:

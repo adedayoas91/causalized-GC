@@ -1,4 +1,4 @@
-"""Unified CPU and NVIDIA GPU implementations of causalised GC."""
+"""Unified CPU and NVIDIA GPU runtime backends for c-GC and c-GC*."""
 
 from .capabilities import (
     BackendDecision,

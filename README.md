@@ -1,9 +1,9 @@
 # causalized-GC
 
-This project implements causalized Granger causality (c-GC), including checks
-for spurious links induced by latent confounders. It provides one public
-estimator that can run the conventional CPU implementation or an NVIDIA GPU
-implementation derived from fastCGC.
+This project implements causalized Granger causality (c-GC) and c-GC*,
+including checks for spurious links induced by latent confounders. These are
+the same algorithms on both execution paths: one public estimator selects a
+conventional CPU runtime or an NVIDIA GPU runtime.
 
 ## Installation
 
@@ -54,11 +54,21 @@ print(model.selected_backend_)      # "cpu" or "gpu"
 print(model.backend_diagnostics_)   # selection details and fallback reason
 ```
 
+Select the algorithm independently of the runtime backend:
+
+```python
+cgc = GcStar(method="cgc", backend="auto")
+cgc_star = GcStar(method="cgc_star", backend="auto")
+```
+
+`method="fcgc"` remains accepted as a compatibility alias for c-GC*, but new
+code and notebooks should use `method="cgc_star"`.
+
 The `backend` option controls execution:
 
 - `backend="auto"` uses a compatible NVIDIA GPU when the required runtime is
-  available, otherwise it falls back to the conventional CPU implementation.
-- `backend="cpu"` always uses the conventional implementation.
+  available, otherwise it falls back to the conventional CPU runtime.
+- `backend="cpu"` always uses the conventional CPU runtime.
 - `backend="gpu"` requires the NVIDIA backend and raises a clear error when it
   is unavailable; it does not silently fall back to CPU.
 
@@ -76,9 +86,9 @@ print(model.backend_diagnostics_)
 ## GPU validation status
 
 The integration and CPU fallback can be exercised on non-GPU machines, but the
-NVIDIA implementation has not yet been validated on representative GPU
+NVIDIA GPU runtime has not yet been validated on representative GPU
 hardware. Numerical parity, memory use, and end-to-end performance benchmarks
-against the CPU implementation are still pending. Until those checks are
+against the CPU runtime are still pending. Until those checks are
 complete, record `selected_backend_` and `backend_diagnostics_` with every GPU
 result and avoid treating speed-up or parity as established.
 

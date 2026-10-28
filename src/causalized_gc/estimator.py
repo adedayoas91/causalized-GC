@@ -11,14 +11,18 @@ from .capabilities import BackendDecision, BackendName, select_backend
 
 
 LOGGER = logging.getLogger(__name__)
+MethodName = Literal["cgc", "cgc_star", "fcgc"]
 
 
 class GcStar:
-    """Run c-GC on the conventional CPU or accelerated NVIDIA backend.
+    """Run c-GC or c-GC* on the CPU or NVIDIA GPU runtime backend.
 
     ``backend="auto"`` selects a usable NVIDIA backend and otherwise records a
     CPU fallback reason in :attr:`backend_diagnostics_`. An explicit GPU request
     never falls back silently.
+
+    Use ``method="cgc"`` for c-GC and ``method="cgc_star"`` for c-GC*.
+    The historical ``method="fcgc"`` spelling remains a compatibility alias.
     """
 
     def __init__(
@@ -27,7 +31,7 @@ class GcStar:
         n_pasts: int = 1,
         n_lags: int = 1,
         temporal: bool = True,
-        method: Literal["cgc", "fcgc"] = "cgc",
+        method: MethodName = "cgc",
         *,
         backend: BackendName = "auto",
         device_id: int = 0,
@@ -38,8 +42,9 @@ class GcStar:
         async_passes: bool = False,
         return_gpu: bool = False,
     ) -> None:
-        if method not in {"cgc", "fcgc"}:
-            raise ValueError("method must be 'cgc' or 'fcgc'")
+        if method not in {"cgc", "cgc_star", "fcgc"}:
+            raise ValueError("method must be 'cgc' or 'cgc_star'")
+        canonical_method = "cgc_star" if method == "fcgc" else method
         if regression_backend not in {"auto", "cupy_lstsq", "cuml"}:
             raise ValueError(
                 "regression_backend must be 'auto', 'cupy_lstsq', or 'cuml'"
@@ -57,7 +62,7 @@ class GcStar:
             "n_pasts": n_pasts,
             "n_lags": n_lags,
             "temporal": temporal,
-            "method": method,
+            "method": canonical_method,
         }
         self._gpu_configuration = {
             "dtype": dtype,

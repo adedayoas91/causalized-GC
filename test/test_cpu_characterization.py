@@ -89,7 +89,7 @@ def test_fit_characterizes_both_conditioning_methods(monkeypatch):
     data = rng.normal(size=(3, 40))
     monkeypatch.setattr(cpu_backend, "perm_test", lambda _x, _y, _n_perm: 0.25)
 
-    for method in ("cgc", "fcgc"):
+    for method in ("cgc", "cgc_star"):
         estimator = make_estimator(n_pasts=1, n_lags=1, method=method).fit(
             data, verbose=0
         )

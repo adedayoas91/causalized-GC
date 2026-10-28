@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import pytest
 
+from causalized_gc import GcStar
 from causalized_gc.capabilities import (
     BackendUnavailableError,
     GpuProbe,
@@ -81,3 +82,14 @@ def test_compatible_gpu_is_selected(
 def test_unknown_backend_is_rejected() -> None:
     with pytest.raises(ValueError, match="backend"):
         select_backend("tpu")  # type: ignore[arg-type]
+
+
+@pytest.mark.parametrize("method", ["cgc_star", "fcgc"])
+def test_cgc_star_name_and_legacy_alias_share_one_algorithm(method: str) -> None:
+    estimator = GcStar(
+        n_perm=1,
+        method=method,  # type: ignore[arg-type]
+        backend="cpu",
+    )
+
+    assert estimator.implementation_.method == "cgc_star"
