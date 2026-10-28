@@ -1,4 +1,4 @@
-"""CUDA implementation of causalised Granger causality."""
+"""NVIDIA CUDA runtime backend for c-GC and c-GC*."""
 
 from __future__ import annotations
 

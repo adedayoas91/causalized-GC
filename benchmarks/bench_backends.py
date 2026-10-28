@@ -1,4 +1,4 @@
-"""Compare conventional CPU and NVIDIA GPU c-GC implementations.
+"""Compare the CPU and NVIDIA GPU runtime backends for c-GC and c-GC*.
 
 Run this on the target NVIDIA machine after installing a matching GPU extra.
 The JSON artifact records timings and runtime metadata; it does not assume the
@@ -146,7 +146,12 @@ def main() -> None:
     parser.add_argument("--n-perm", type=int, nargs="+", default=[32, 128])
     parser.add_argument("--n-pasts", type=int, default=1)
     parser.add_argument("--n-lags", type=int, default=1)
-    parser.add_argument("--method", choices=["cgc", "fcgc"], default="cgc")
+    parser.add_argument(
+        "--method",
+        choices=["cgc", "cgc_star", "fcgc"],
+        default="cgc",
+        help="Algorithm: cgc or cgc_star (fcgc is a compatibility alias).",
+    )
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--repeats", type=int, default=3)
     parser.add_argument("--warmups", type=int, default=1)

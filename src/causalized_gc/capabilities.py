@@ -57,7 +57,7 @@ def probe_gpu(
 
     The probe is deliberately lazy: importing :mod:`causalized_gc` never imports
     CuPy or initializes CUDA. Driver/runtime failures are converted to structured
-    diagnostics so ``backend="auto"`` can choose the CPU implementation.
+    diagnostics so ``backend="auto"`` can choose the CPU runtime backend.
     """
 
     if device_id < 0:

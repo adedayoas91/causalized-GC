@@ -24,7 +24,7 @@ def toy_data(seed: int = 0) -> np.ndarray:
     return data
 
 
-@pytest.mark.parametrize("method", ["cgc", "fcgc"])
+@pytest.mark.parametrize("method", ["cgc", "cgc_star"])
 def test_gpu_fit_through_public_api(method: str) -> None:
     model = GcStar(
         n_perm=32,

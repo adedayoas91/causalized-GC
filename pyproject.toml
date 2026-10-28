@@ -1,7 +1,7 @@
 [project]
 name = "causalized-gc"
 version = "0.1.0"
-description = "CPU and NVIDIA GPU implementations of causalised Granger causality."
+description = "CPU and NVIDIA GPU runtime backends for c-GC and c-GC*."
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [

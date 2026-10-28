@@ -1,4 +1,4 @@
-"""GPU implementation of the causalised Granger-causality estimator.
+"""NVIDIA GPU runtime backend for the c-GC and c-GC* estimator.
 
 The computation remains on the selected CUDA device throughout ``fit`` and
 crosses back to the host only at public boundaries unless ``return_gpu=True``.
@@ -26,7 +26,7 @@ _DTYPES = {"float32": np.float32, "float64": np.float64}
 
 @dataclass
 class GcStar:
-    """GPU c-GC/fcGC estimator.
+    """NVIDIA GPU runtime backend for the c-GC and c-GC* estimator.
 
     Parameters
     ----------
@@ -39,7 +39,8 @@ class GcStar:
     temporal:
         Compatibility flag retained from the conventional implementation.
     method:
-        Either ``"cgc"`` or ``"fcgc"``.
+        Either ``"cgc"`` or ``"cgc_star"``. The historical ``"fcgc"``
+        spelling remains a compatibility alias for ``"cgc_star"``.
     dtype:
         Device computation dtype: ``"float32"`` or ``"float64"``.
     random_state:
@@ -75,8 +76,10 @@ class GcStar:
     pVal_inv_corr_: Array | None = field(default=None, repr=False)
 
     def __post_init__(self) -> None:
-        if self.method not in {"cgc", "fcgc"}:
-            raise ValueError("method must be 'cgc' or 'fcgc'.")
+        if self.method not in {"cgc", "cgc_star", "fcgc"}:
+            raise ValueError("method must be 'cgc' or 'cgc_star'.")
+        if self.method == "fcgc":
+            self.method = "cgc_star"
         if self.n_pasts < 0:
             raise ValueError("n_pasts must be non-negative.")
         if self.n_lags < 1:
@@ -160,7 +163,7 @@ class GcStar:
         return self._delete_rows(shifted, excluded)
 
     def _conditioning_set(self, shifted: Array, i: int, j: int) -> Array:
-        if self.method == "fcgc":
+        if self.method == "cgc_star":
             return self._delete_rows(shifted, [i, j])
         return self.get_conditioning_set(shifted, i, j)
 
